@@ -8,12 +8,16 @@
   <meta name="theme-color" content="#B85C38">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https://dashscope.aliyuncs.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:;">
 
-  <!-- API Key 配置：请替换为你的 DashScope API Key -->
+  <!-- API Key 配置：通过环境变量注入 -->
   <script>
+    // 获取环境变量的多种方式：
+    // 1. 构建工具注入（Vite等）: import.meta.env.QWEN_API_KEY
+    // 2. 运行时注入: window.QWEN_API_KEY（可在部署时通过脚本注入）
+    // 3. 服务端配置: 如 Nginx sub_filter 替换
     window.__DFD_CONFIG__ = {
-      // 获取方式：访问 https://dashscope.aliyun.com/ → API-KEY 管理 → 创建新 Key
-      // 注意：请勿将真实 Key 提交到公开仓库，生产环境建议通过环境变量注入
-      apiKey: 'YOUR_DASHSCOPE_API_KEY_HERE'
+      apiKey: (typeof import.meta !== 'undefined' && import.meta.env?.QWEN_API_KEY) || 
+              window.QWEN_API_KEY || 
+              'YOUR_QWEN_API_KEY_HERE'
     };
   </script>
 
