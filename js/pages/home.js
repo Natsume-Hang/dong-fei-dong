@@ -33,8 +33,8 @@
 
   // ==================== 常量定义 ====================
 
-  /** 输入文本最小字符数 */
-  const MIN_CHARS = 10
+  /** 输入文本最小字符数（角色名通常较短，放宽到 2 个字符） */
+  const MIN_CHARS = 2
 
   /** 输入文本最大字符数 */
   const MAX_CHARS = 500
@@ -413,7 +413,7 @@
       if (!this._checkInputValid(text)) {
         logger && logger.warn('HomePage', '解读按钮点击时校验未通过')
         if (window.Toast) {
-          window.Toast.show('请输入 10-500 字符的中文文本', 'warning')
+          window.Toast.show('请输入 2-500 字符的中文文本', 'warning')
         }
         return
       }

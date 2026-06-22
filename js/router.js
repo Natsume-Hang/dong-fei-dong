@@ -155,6 +155,17 @@
       // 监听浏览器 hash 变化（包括前进/后退按钮）
       window.addEventListener('hashchange', handleHashChange)
 
+      // 绑定底部导航点击事件
+      const navItems = document.querySelectorAll('.bottom-nav .nav-item')
+      navItems.forEach((item) => {
+        item.addEventListener('click', () => {
+          const route = item.dataset.route
+          if (route) {
+            Router.navigate(route)
+          }
+        })
+      })
+
       // 初始化时导航到当前 hash 对应的页面
       const currentHash = window.location.hash
       if (!currentHash || currentHash === '#' || currentHash === '#/') {
