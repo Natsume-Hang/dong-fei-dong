@@ -1,0 +1,135 @@
+/* ============================================================
+   reset.css - 全局重置样式
+   懂非懂 (DongFeiDong) 项目
+   统一各浏览器默认样式，确保一致的渲染效果
+   ============================================================ */
+
+/* ---------- 盒模型重置 ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ---------- HTML 根元素 ---------- */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* ---------- 文档主体 ---------- */
+body {
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+    Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- 标题元素 ---------- */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: normal;
+}
+
+/* ---------- 段落与文本 ---------- */
+p {
+  margin: 0;
+}
+
+/* ---------- 列表 ---------- */
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------- 链接 ---------- */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- 图片 ---------- */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border: 0;
+}
+
+/* ---------- 表单元素 ---------- */
+button,
+input,
+textarea,
+select {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* ---------- 表格 ---------- */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* ---------- 引用 ---------- */
+blockquote {
+  margin: 0;
+}
+
+/* ---------- 字段集 ---------- */
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+/* ---------- 定义列表 ---------- */
+dl, dd, dt {
+  margin: 0;
+}
+
+/* ---------- 水平线 ---------- */
+hr {
+  margin: 0;
+  border: none;
+}
+
+/* ---------- 隐藏属性 ---------- */
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- 减弱动效偏好 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

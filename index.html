@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>懂非懂 — 你好像懂了，又好像没懂</title>
+  <meta name="description" content="AI驱动的文化典故解读工具，帮你理解歌词、诗词、日常用语中的典故出处">
+  <meta name="theme-color" content="#B85C38">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https://dashscope.aliyuncs.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:;">
+
+  <!-- API Key 配置：请替换为你的 DashScope API Key -->
+  <script>
+    window.__DFD_CONFIG__ = {
+      // 获取方式：访问 https://dashscope.aliyun.com/ → API-KEY 管理 → 创建新 Key
+      // 注意：请勿将真实 Key 提交到公开仓库，生产环境建议通过环境变量注入
+      apiKey: 'YOUR_DASHSCOPE_API_KEY_HERE'
+    };
+  </script>
+
+  <!-- 样式表：按依赖顺序加载 -->
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <div class="app-container" id="app">
+    <!-- 顶部标题栏 -->
+    <header class="app-header">
+      <h1 class="app-title">懂非懂</h1>
+      <p class="app-slogan">你好像懂了，又好像没懂</p>
+    </header>
+
+    <!-- 页面容器 -->
+    <main class="pages-container">
+      <!-- 首页 -->
+      <section class="page active" id="page-home" data-page="home">
+        <!-- 每日一辨卡片 -->
+        <div class="section-header">
+          <h2>每日一辨</h2>
+        </div>
+        <div id="daily-debunk-card" class="daily-card">
+          <span class="daily-badge">今日辨析</span>
+          <p class="daily-question" id="daily-question">加载中...</p>
+          <p class="daily-hint">点击查看真相 →</p>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="section-header">
+          <h2>输入你想了解的文本</h2>
+        </div>
+        <div class="input-section">
+          <textarea class="input-area" id="input-textarea" placeholder="粘贴歌词、诗词、书摘、角色名...&#10;支持 10-500 字符" maxlength="500"></textarea>
+          <div class="char-count" id="char-count">0 / 500</div>
+
+          <!-- 类型选择器 -->
+          <div class="type-chips" id="type-selector">
+            <span class="type-chip" data-type="通用">通用</span>
+            <span class="type-chip" data-type="歌词">歌词</span>
+            <span class="type-chip" data-type="书摘">书摘</span>
+            <span class="type-chip" data-type="角色名">角色名</span>
+            <span class="type-chip" data-type="典故">典故</span>
+          </div>
+          <p class="type-hint" id="type-hint">系统将根据输入内容推荐类型</p>
+
+          <!-- 解读按钮 -->
+          <button class="btn btn-primary btn-block btn-lg" id="btn-interpret" disabled>
+            开始解读
+          </button>
+        </div>
+
+        <!-- 热门搜索（占位，默认隐藏） -->
+        <div class="section-header" id="hot-keywords-section" style="display:none">
+          <h2>热门搜索</h2>
+        </div>
+        <div class="hot-keywords" id="hot-keyword-tags"></div>
+      </section>
+
+      <!-- 解读结果页 -->
+      <section class="page" id="page-result" data-page="result">
+        <div class="result-header">
+          <button class="btn btn-secondary btn-sm" id="btn-back">← 返回</button>
+          <div class="result-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-favorite" title="收藏">☆</button>
+            <button class="btn btn-secondary btn-sm" id="btn-share-card" title="分享">↗</button>
+          </div>
+        </div>
+
+        <!-- 加载状态 -->
+        <div class="loading-state" id="result-loading" style="display:none">
+          <div class="loading-spinner"></div>
+          <p>正在解读中...</p>
+        </div>
+
+        <!-- 错误状态 -->
+        <div class="error-state" id="result-error" style="display:none">
+          <p id="result-error-msg">解读失败，请重试</p>
+          <button class="btn btn-primary" id="btn-retry">重新解读</button>
+        </div>
+
+        <!-- 结果内容 -->
+        <div class="result-content" id="result-content" style="display:none">
+          <div class="result-card">
+            <div class="result-section">
+              <span class="credibility-tag" id="credibility-tag">--</span>
+              <h2 class="result-title" id="allusion-title"></h2>
+              <p class="result-source" id="source-info"></p>
+            </div>
+
+            <div class="result-section">
+              <span class="result-label">原文引用</span>
+              <p class="result-text" id="original-text"></p>
+            </div>
+
+            <div class="result-section">
+              <span class="result-label">解读</span>
+              <p class="result-text" id="interpretation-text"></p>
+            </div>
+
+            <div class="result-section" id="pop-culture-section" style="display:none">
+              <span class="result-label">流行文化引用</span>
+              <div id="pop-culture-list"></div>
+            </div>
+
+            <div class="result-section" id="related-section" style="display:none">
+              <span class="result-label">相关典故</span>
+              <div id="related-list"></div>
+            </div>
+          </div>
+
+          <!-- 反馈栏 -->
+          <div class="feedback-bar" id="feedback-bar">
+            <button class="feedback-btn" data-feedback="helpful">👍 有帮助</button>
+            <button class="feedback-btn" data-feedback="incorrect">❌ 有误</button>
+            <button class="feedback-btn" data-feedback="incomplete">📝 不完整</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 历史记录页 -->
+      <section class="page" id="page-history" data-page="history">
+        <div class="page-header">
+          <h2>历史记录</h2>
+          <button class="btn btn-secondary btn-sm" id="btn-clear-history">清空全部</button>
+        </div>
+        <div id="filter-chips" class="type-chips"></div>
+        <div id="history-list"></div>
+        <div class="empty-state" id="history-empty" style="display:none">
+          <p>暂无历史记录</p>
+          <p class="empty-hint">去首页解读一段文本吧</p>
+        </div>
+      </section>
+
+      <!-- 收藏页 -->
+      <section class="page" id="page-favorites" data-page="favorites">
+        <div class="page-header">
+          <h2>我的收藏</h2>
+          <button class="btn btn-secondary btn-sm" id="btn-clear-favorites">清空全部</button>
+        </div>
+        <div id="filter-chips" class="type-chips"></div>
+        <div id="favorites-list"></div>
+        <div class="empty-state" id="favorites-empty" style="display:none">
+          <p>暂无收藏</p>
+          <p class="empty-hint">解读后点击 ☆ 即可收藏</p>
+        </div>
+      </section>
+
+      <!-- 每日一辨详情页 -->
+      <section class="page" id="page-daily" data-page="daily">
+        <div class="page-header">
+          <button class="btn btn-secondary btn-sm" id="btn-daily-back">← 返回</button>
+          <h2>每日一辨</h2>
+        </div>
+        <div id="daily-detail-content"></div>
+      </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <div class="nav-item active" data-route="home">
+        <span class="nav-icon">🏠</span>
+        <span>首页</span>
+      </div>
+      <div class="nav-item" data-route="history">
+        <span class="nav-icon">📋</span>
+        <span>历史</span>
+      </div>
+      <div class="nav-item" data-route="favorites">
+        <span class="nav-icon">⭐</span>
+        <span>收藏</span>
+      </div>
+    </nav>
+  </div>
+
+  <!-- 脚本：按依赖顺序加载 -->
+  <script src="assets/illustrations.js"></script>
+  <script src="js/logger.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/seed-data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/modal.js"></script>
+  <script src="js/components/credibility.js"></script>
+  <script src="js/components/card-generator.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/utils/copyright.js"></script>
+  <script src="js/utils/lang-detect.js"></script>
+  <script src="js/pages/home.js"></script>
+  <script src="js/pages/result.js"></script>
+  <script src="js/pages/history.js"></script>
+  <script src="js/pages/favorites.js"></script>
+  <script src="js/pages/daily.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
