@@ -8,16 +8,12 @@
   <meta name="theme-color" content="#B85C38">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https://dashscope.aliyuncs.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:;">
 
-  <!-- API Key 配置：通过环境变量注入 -->
+  <!-- API Key 配置：已通过部署脚本注入 -->
   <script>
-    // 获取环境变量的多种方式：
-    // 1. 构建工具注入（Vite等）: import.meta.env.QWEN_API_KEY
-    // 2. 运行时注入: window.QWEN_API_KEY（可在部署时通过脚本注入）
-    // 3. 服务端配置: 如 Nginx sub_filter 替换
+    // API Key 已通过 deploy.sh 脚本注入到此处
+    // 如果需要修改，请使用：export QWEN_API_KEY=your_key && ./deploy.sh
     window.__DFD_CONFIG__ = {
-      apiKey: (typeof import.meta !== 'undefined' && import.meta.env?.QWEN_API_KEY) || 
-              window.QWEN_API_KEY || 
-              'YOUR_QWEN_API_KEY_HERE'
+      apiKey: 'sk-be7d324c3b1f4cea98b1467b9c20f5c1'
     };
   </script>
 

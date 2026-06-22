@@ -200,17 +200,33 @@
       // 计算每条记录的匹配得分
       const scored = []
 
+      // 计算输入文本与关键词的匹配度（基于公共子串长度占比）
+      function _calcMatchScore(input, keyword) {
+        // 快速排除：keyword 比输入长很多时不太可能是精确匹配
+        if (keyword.length > input.length * 2) return 0
+        // 快速排除：keyword 或 input 太短（单字）时避免误匹配
+        if (keyword.length < 2 && input.length > 2) return 0
+
+        // 方式1：输入包含关键词（如输入"但愿人长久"包含关键词"但愿人长久"）
+        if (input.includes(keyword)) {
+          // 关键词越长、占输入比例越高，得分越高
+          return 1 + (keyword.length / input.length)
+        }
+        // 方式2：关键词包含输入（如输入"故乡"包含在关键词"鲁迅故乡"中）
+        if (keyword.includes(input)) {
+          return 1 + (input.length / keyword.length)
+        }
+        return 0
+      }
+
       _data.forEach((record, idx) => {
         let score = 0
 
-        // 遍历记录的关键词，检查输入文本是否包含该关键词（子串匹配）
+        // 遍历记录的关键词，使用基于长度占比的匹配评分
         if (Array.isArray(record.keywords)) {
           record.keywords.forEach((keyword) => {
             const lowerKeyword = keyword.toLowerCase()
-            // 双向子串匹配：输入包含关键词 或 关键词包含输入
-            if (processedInput.includes(lowerKeyword) || lowerKeyword.includes(processedInput)) {
-              score += 1
-            }
+            score += _calcMatchScore(processedInput, lowerKeyword)
           })
         }
 
@@ -229,7 +245,10 @@
           score += 3
         }
 
-        if (score > 0) {
+        // 只有当关键词匹配得分 >= 1 时才视为有效匹配
+        // （避免单字误匹配导致的虚假结果）
+        const keywordScore = score - (inputType && record.input_type === inputType ? 3 : 0)
+        if (keywordScore >= 1) {
           scored.push({ idx, score, record })
         }
       })

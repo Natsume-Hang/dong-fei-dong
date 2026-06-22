@@ -1,0 +1,27 @@
+{
+  "name": "dong-fei-dong",
+  "version": "1.0.0",
+  "description": "> AI 驱动的文化典故解读工具，帮你理解歌词、诗词、日常用语中的典故出处。 > TRAE AI 创造力大赛参赛作品",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Natsume-Hang/dong-fei-dong.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Natsume-Hang/dong-fei-dong/issues"
+  },
+  "homepage": "https://github.com/Natsume-Hang/dong-fei-dong#readme",
+  "devDependencies": {
+    "vite": "^8.0.16"
+  }
+}
